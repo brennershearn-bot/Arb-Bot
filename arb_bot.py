@@ -7,7 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1hNkL_MYjHdiYb4ANylBoInM3zRsHo2BX
 """
 
-!pip install -q py-clob-client web3 requests
 
 import requests
 import time
