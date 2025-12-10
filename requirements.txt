@@ -1,0 +1,8 @@
+requests
+pandas
+web3
+pycryptodome
+py-clob-client
+aiohttp
+urllib3
+python-telegram-bot
