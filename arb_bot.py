@@ -43,6 +43,7 @@ print("LIVE TRADING — scanning Kalshi + Polymarket + Limitless")
 
 TOKEN = None
 HEADERS = {}
+KALSHI_BASE_URL = "https://api.elections.kalshi.com/trade-api/v2"
 
 # Robust Kalshi login with retry and debug info
 def kalshi_login(max_retries=3):
@@ -50,7 +51,7 @@ def kalshi_login(max_retries=3):
     for attempt in range(1, max_retries + 1):
         try:
             r = requests.post(
-                "https://trading-api.kalshi.com/trade-api/v2/login",
+                f"{KALSHI_BASE_URL}/login",
                 json={"email": KALSHI_EMAIL, "password": KALSHI_PASSWORD},
                 timeout=10
             )
@@ -78,14 +79,14 @@ kalshi_login()
 def get_kalshi():
     try:
         r = requests.get(
-            "https://trading-api.kalshi.com/trade-api/v2/markets?limit=100",
+            f"{KALSHI_BASE_URL}/markets?limit=100",
             headers=HEADERS,
             timeout=10
         )
         if r.status_code == 401:
             kalshi_login()
             r = requests.get(
-                "https://trading-api.kalshi.com/trade-api/v2/markets?limit=100",
+                f"{KALSHI_BASE_URL}/markets?limit=100",
                 headers=HEADERS,
                 timeout=10
             )
