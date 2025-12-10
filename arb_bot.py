@@ -44,18 +44,34 @@ print("LIVE TRADING — scanning Kalshi + Polymarket + Limitless")
 TOKEN = None
 HEADERS = {}
 
-def kalshi_login():
+# Robust Kalshi login with retry and debug info
+def kalshi_login(max_retries=3):
     global TOKEN, HEADERS
-    try:
-        r = requests.post(
-            "https://trading-api.kalshi.com/trade-api/v2/login",
-            json={"email": KALSHI_EMAIL, "password": KALSHI_PASSWORD},
-            timeout=10
-        )
-        TOKEN = r.json().get('token')
-        HEADERS = {"Authorization": TOKEN} if TOKEN else {}
-    except Exception as e:
-        print("Kalshi login error:", e)
+    for attempt in range(1, max_retries + 1):
+        try:
+            r = requests.post(
+                "https://trading-api.kalshi.com/trade-api/v2/login",
+                json={"email": KALSHI_EMAIL, "password": KALSHI_PASSWORD},
+                timeout=10
+            )
+            if r.status_code != 200:
+                print(f"Kalshi login failed (attempt {attempt}) — status code: {r.status_code} | response: {r.text}")
+                time.sleep(5)
+                continue
+            data = r.json()
+            TOKEN = data.get('token')
+            HEADERS = {"Authorization": TOKEN} if TOKEN else {}
+            if TOKEN:
+                print("Kalshi login successful")
+                return True
+            else:
+                print(f"Kalshi login attempt {attempt} did not return token: {data}")
+                time.sleep(5)
+        except Exception as e:
+            print(f"Kalshi login error (attempt {attempt}):", e)
+            time.sleep(5)
+    print("Kalshi login failed after multiple attempts")
+    return False
 
 kalshi_login()
 
