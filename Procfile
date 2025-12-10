@@ -1,1 +1,1 @@
-worker: python bot.py
+worker: python arb_bot.py
